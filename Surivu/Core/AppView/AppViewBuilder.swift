@@ -24,7 +24,3 @@ struct AppViewBuilder<TabbarView: View, OnboardingView: View>: View {
         }
     }
 }
-
-#Preview {
-    AppView()
-}
