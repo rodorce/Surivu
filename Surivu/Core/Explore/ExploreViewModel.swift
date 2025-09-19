@@ -9,7 +9,6 @@ import SwiftUI
 @MainActor
 protocol ExploreInteractor {
     func getMangas() async throws -> [Manga]
-    func getManga(id: Int) async throws -> Manga
 }
 
 extension CoreInteractor: ExploreInteractor {}
@@ -33,15 +32,16 @@ class ExploreViewModel {
     }
     
     func loadMangas() async {
+        isGridLoading = true
         do {
-            mangas = try await interactor.getMangas()
+            mangas = try await interactor.getMangas().sorted(by: {$0.id < $1.id})
         } catch {
-            print("Could not retrieve mangas")
+            print("Error retrieving mangas list")
         }
         isGridLoading = false
     }
     
     func onPressManga(mangaId: Int) {
-        path.append(.chapters(mangaId: mangaId))
+        path.append(.mangaDetails(mangaId: mangaId))
     }
 }

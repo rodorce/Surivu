@@ -10,13 +10,14 @@ import SwiftUI
 @Observable
 class MangaManager {
     private let service: MangaService
+    private(set) var mangas: [Manga] = []
     
     init(service: MangaService) {
         self.service = service
     }
     
-    func getMangas() async throws -> [Manga] {
-        try await service.getMangas()
+    func getMangas() async throws {
+        self.mangas = try await service.getMangas()
     }
     
     func getManga(id: Int) async throws -> Manga {

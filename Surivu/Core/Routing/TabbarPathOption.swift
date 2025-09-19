@@ -7,7 +7,7 @@
 import SwiftUI
 
 enum TabbarPathOption: Hashable {
-    case chapters(mangaId: Int)
+    case mangaDetails(mangaId: Int)
     case chapter(mangaId: Int, chapterId: Int)
 }
 
@@ -19,8 +19,8 @@ struct NavDestForTabbarViewModifier: ViewModifier {
         content
             .navigationDestination(for: TabbarPathOption.self) { option in
                 switch option {
-                case .chapters(mangaId: let mangaId):
-                    Text("Chapters List View \(mangaId)")
+                case .mangaDetails(mangaId: let mangaId):
+                    MangaDetailsView(viewModel: MangaDetailsViewModel(interactor: CoreInteractor(container: dependencyContainer)), mangaId: mangaId)
                 case .chapter(mangaId: let mangaId, chapterId: let chapterId):
                     Text("Chapter Overview \(mangaId) \(chapterId)")
                 }

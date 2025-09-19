@@ -20,6 +20,9 @@ struct CoreInteractor {
     }
     
     func getMangas() async throws -> [Manga] {
-        try await mangaManager.getMangas()
+        if mangaManager.mangas.isEmpty {
+            try await mangaManager.getMangas()
+        }
+        return mangaManager.mangas
     }
 }
