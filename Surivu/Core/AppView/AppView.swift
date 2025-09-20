@@ -8,17 +8,20 @@
 import SwiftUI
 
 struct AppView: View {
-    @State var showTabBar: Bool = true
+    @Environment(DependencyContainer.self) private var container
+    @State var viewModel: AppViewModel
     var body: some View {
-        AppViewBuilder(showTabBar: showTabBar, tabbarView: {
+        if viewModel.interactor.showTabBar {
             TabBarView()
-        }, onboardingView: {
-            EmptyView()
-        })
+        }
+        else {
+            LogInView(viewModel: LoginViewModel(interactor: CoreInteractor(container: container)))
+        }
     }
     
 }
 
 #Preview {
-    AppView()
+    let container = DevPreview.shared.container
+    AppView(viewModel: AppViewModel(interactor: CoreInteractor(container: container)))
 }

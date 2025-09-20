@@ -10,12 +10,21 @@ import SwiftUI
 struct Dependencies {
     let container: DependencyContainer
     let mangaManager: MangaManager
+    let authManager: AuthManager
+    let localPersistenceManager: LocalPersistenceManager
+    let appState: AppState
 
     init() {
+        self.localPersistenceManager = LocalPersistenceManager(service: KeychainService())
         self.mangaManager = MangaManager(service: MockMangaService())
+        self.authManager = AuthManager(service: MangaAuthService(), localPersistenceManager: localPersistenceManager)
+        self.appState = AppState()
         
         let container = DependencyContainer()
         container.register(MangaManager.self, service: mangaManager)
+        container.register(AuthManager.self, service: authManager)
+        container.register(LocalPersistenceManager.self, service: localPersistenceManager)
+        container.register(AppState.self, service: appState)
         self.container = container
     }
 }
@@ -23,15 +32,24 @@ struct Dependencies {
 struct DevPreview {
     static let shared = DevPreview()
     let mangaManager: MangaManager
+    let authManager: AuthManager
+    let localPersistenceManager: LocalPersistenceManager
+    let appState: AppState
     
     var container: DependencyContainer {
         let container = DependencyContainer()
-        container.register(MangaManager.self, service: mangaManager )
+        container.register(MangaManager.self, service: mangaManager)
+        container.register(AuthManager.self, service: authManager)
+        container.register(LocalPersistenceManager.self, service: localPersistenceManager)
+        container.register(AppState.self, service: appState)
         return container
     }
     
     init() {
         self.mangaManager = MangaManager(service: MockMangaService())
+        self.localPersistenceManager = LocalPersistenceManager(service: KeychainService())
+        self.authManager = AuthManager(service: MangaAuthService(), localPersistenceManager: localPersistenceManager)
+        self.appState = AppState()
     }
 }
 

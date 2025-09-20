@@ -13,7 +13,7 @@ struct SurivuApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AppView()
+            AppView(viewModel: AppViewModel(interactor: CoreInteractor(container: delegate.dependencies.container)))
                 .environment(delegate.dependencies.container)
         }
     }
