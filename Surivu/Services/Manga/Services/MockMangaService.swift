@@ -14,5 +14,11 @@ struct MockMangaService: MangaService {
         return MangaDetail.mock
     }
     
+    func getChapters(byMangaId: String, limit: Int, offset: Int) async throws -> [ChapterDetail] {
+        return ChapterDetail.mocks
+    }
     
+    func getChapterImages(chapterId: String) async throws -> [String] {
+        [Constants.randomImageUrl, Constants.randomImageUrl, Constants.randomImageUrl]
+    }
 }

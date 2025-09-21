@@ -9,9 +9,10 @@ import SwiftUI
 
 struct MangaDetailsCellView: View {
     var title: String? = "Sample title"
-    var description: String? = "Description for the manga."
+    var description: String = "Description for the manga."
     var imageUrl: String? = Constants.randomImageUrl
     var cornerRadius: CGFloat = 16
+    @State var expandDescription: Bool = false
     
     var body: some View {
         mangaDetailsHeader
@@ -26,23 +27,20 @@ struct MangaDetailsCellView: View {
                     case .empty:
                         Rectangle()
                             .fill(.thinMaterial)
+                            .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: 600)
+                            .blur(radius: 3)
                             .overlay(alignment: .bottomLeading) {
-                                ZStack(alignment: .bottomLeading) {
-                                    Color.black.opacity(0.6)
-                                    mangaDetailsHeaderText
-                                }
+                                mangaHeaderOverlay
                             }
                     case .success(let image):
                         image
                             .resizable()
-                            .scaledToFill()
+                            .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: 600)
+                            .blur(radius: 3)
                             .overlay(alignment: .bottomLeading) {
-                                ZStack(alignment: .bottomLeading) {
-                                    Color.black.opacity(0.6)
-                                    mangaDetailsHeaderText
-                                }
+                                mangaHeaderOverlay
                             }
                         
                     case .failure:
@@ -50,21 +48,26 @@ struct MangaDetailsCellView: View {
                             .fill(.thinMaterial)
                             .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: 600)
+                            .blur(radius: 3)
                             .overlay(alignment: .bottomLeading) {
-                                ZStack(alignment: .bottomLeading) {
-                                    Color.black.opacity(0.6)
-                                    mangaDetailsHeaderText
-                                }
+                                mangaHeaderOverlay
                             }
                     @unknown default:
                         Rectangle()
                             .fill(.thinMaterial)
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity, maxHeight: 600)
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: 570)
                             .overlay(alignment: .bottomLeading) {
                                 ZStack(alignment: .bottomLeading) {
                                     Color.black.opacity(0.6)
-                                    mangaDetailsHeaderText
+                                    VStack {
+                                        mangaDetailsHeaderText
+                                        Button {
+                                            expandDescription.toggle()
+                                        } label: {
+                                            Text(expandDescription ? "Show less" : "Show more")
+                                        }
+                                    }
                                 }
                             }
                     }
@@ -82,24 +85,44 @@ struct MangaDetailsCellView: View {
     }
     
     private var mangaDetailsHeaderText: some View {
-        VStack {
-            if let title, let description {
+        VStack(alignment: .leading) {
+            if let title {
                 Text(title)
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .shadow(radius: 3)
                 Text(description)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .minimumScaleFactor(0.5)
                     .shadow(radius: 5)
+                    .lineLimit(expandDescription ? nil : 6)
+                    .animation(.easeInOut, value: expandDescription)
             }
         }
         .padding(16)
+    }
+    
+    private var mangaHeaderOverlay: some View {
+        ZStack(alignment: .bottomLeading) {
+            Color.black.opacity(0.6)
+            VStack(alignment: .leading) {
+                mangaDetailsHeaderText
+                if description.count > 300 {
+                    Button {
+                        expandDescription.toggle()
+                    } label: {
+                        Text(expandDescription ? "Show less" : "Show more")
+                            .foregroundStyle(.white)
+                            .fontWeight(.semibold)
+                    }
+                    .buttonStyle(.bordered)
+                    .backgroundStyle(.blue)
+                }
+            }
+        }
+        .frame(maxHeight: 600)
     }
 }
 

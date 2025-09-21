@@ -24,7 +24,8 @@ struct RemoteMangaService: MangaService {
                         coverId: coverEntity.id,
                         title: mangaEntity.attributes.title?.en ?? "",
                         description: mangaEntity.attributes.description?.en ?? "",
-                        coverUrl: "\(Endpoints.coversImageUrl)/\(mangaEntity.id)/\(coverEntity.attributes.fileName)"
+                        coverUrl: "\(Endpoints.coversImageUrl)/\(mangaEntity.id)/\(coverEntity.attributes.fileName)",
+                        lastChapter: Int(mangaEntity.attributes.lastChapter ?? "0") ?? 0
                     )
                 }
             }
@@ -44,5 +45,26 @@ struct RemoteMangaService: MangaService {
     
     func getManga(mangas: [MangaDetail]?, id: String) async throws -> MangaDetail {
         return mangas?.first(where: {$0.id == id}) ?? MangaDetail.mock
+    }
+    
+    func getChapters(byMangaId: String, limit: Int, offset: Int) async throws -> [ChapterDetail] {
+        let chapterEntities: [ChapterEntity] = try await networkService.makeNetworkRequest(
+            endpoint: "\(Endpoints.chapter)?limit=\(limit)&manga=\(byMangaId)&offset=\(offset)&translatedLanguage%5B%5D=en&order%5BcreatedAt%5D=desc&order%5BupdatedAt%5D=desc&order%5BpublishAt%5D=desc&order%5BreadableAt%5D=desc&order%5Bvolume%5D=desc&order%5Bchapter%5D=desc&",
+            responseType: ChapterEntity.self
+        )
+        
+        return chapterEntities.map { entity in
+            ChapterDetail(chapterEntity: entity)
+        }
+    }
+    
+    func getChapterImages(chapterId: String) async throws -> [String] {
+        let chapterMetadataEntity: ChapterMetadataEntity = try await networkService.makeNetworkRequestWithoutObjectResponseType(endpoint: "\(Endpoints.chapterMetadata)/\(chapterId)", responseType: ChapterMetadataEntity.self)
+        print("METADATA", chapterMetadataEntity)
+        let chapterImages: [String] = chapterMetadataEntity.chapter.dataSaver.map { imageId in
+            return "\(chapterMetadataEntity.baseURL)/data-saver/\(chapterMetadataEntity.chapter.hash)/\(imageId)"
+        }
+        return chapterImages
+        
     }
 }

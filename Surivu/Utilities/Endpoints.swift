@@ -9,4 +9,6 @@ struct Endpoints {
     static let mangas = "https://api.mangadex.org/manga"
     static let cover = "https://api.mangadex.org/cover"
     static let coversImageUrl = "https://uploads.mangadex.org/covers"
+    static let chapter = "https://api.mangadex.org/chapter"
+    static let chapterMetadata = "https://api.mangadex.org/at-home/server"
 }

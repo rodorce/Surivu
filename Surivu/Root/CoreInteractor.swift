@@ -20,6 +20,8 @@ struct CoreInteractor {
         self.localPersistenceManager = container.resolve(LocalPersistenceManager.self)!
         self.appState = container.resolve(AppState.self)!
     }
+    
+    //MARK: AuthManager
     func signInMangadex(username: String, password: String) async throws {
         try await authManager.signInMangadex(username: username, password: password)
     }
@@ -28,6 +30,7 @@ struct CoreInteractor {
         authManager.logOutMangadex()
     }
     
+    //MARK: MangaManager
     func getManga(id: String) async throws -> MangaDetail {
         try await mangaManager.getManga(id: id)
     }
@@ -39,6 +42,15 @@ struct CoreInteractor {
         return mangaManager.mangas
     }
     
+    func getChapters(byMangaId: String, limit: Int?, offset: Int) async throws -> [ChapterDetail] {
+        try await mangaManager.getChapters(mangaId: byMangaId, limit: limit, offset: offset)
+    }
+    
+    func getChapterImages(chapterId: String) async throws -> [String] {
+        try await mangaManager.getChapterImages(chapterId: chapterId)
+    }
+    
+    //MARK: AppStateManager
     var showTabBar: Bool {
         appState.showTabBar
     }

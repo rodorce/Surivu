@@ -11,13 +11,15 @@ struct MangaDetail {
     let title: String
     let description: String
     let coverUrl: String?
+    let lastChapter: Int?
     
-    init(id: String, coverId: String, title: String, description: String, coverUrl: String? = nil) {
+    init(id: String, coverId: String, title: String, description: String, coverUrl: String? = nil, lastChapter: Int) {
         self.id = id
         self.coverId = coverId
         self.title = title
         self.description = description
         self.coverUrl = coverUrl
+        self.lastChapter = lastChapter
     }
     
     init(entity: MangaEntity) {
@@ -26,6 +28,7 @@ struct MangaDetail {
         self.title = entity.attributes.title?.en ?? ""
         self.description = entity.attributes.description?.en ?? ""
         self.coverUrl = ""
+        self.lastChapter = Int(entity.attributes.lastChapter ?? "0") ?? 0
     }
     static var mock: MangaDetail {
         MangaDetail(
@@ -33,7 +36,8 @@ struct MangaDetail {
             coverId: "mock-cover-456",
             title: "Mock Manga Title",
             description: "This is a mock description of a manga, useful for previews and testing.",
-            coverUrl: Constants.randomImageUrl
+            coverUrl: Constants.randomImageUrl,
+            lastChapter: 212
         )
     }
     static var mocks: [MangaDetail] {
@@ -43,21 +47,24 @@ struct MangaDetail {
                 coverId: "cover-1",
                 title: "Samurai Adventure",
                 description: "A tale of honor and swordsmanship.",
-                coverUrl: Constants.randomImageUrl
+                coverUrl: Constants.randomImageUrl,
+                lastChapter: 100
             ),
             MangaDetail(
                 id: "mock-id-2",
                 coverId: "cover-2",
                 title: "Cyberpunk Dreams",
                 description: "A futuristic world filled with neon lights and secrets.",
-                coverUrl: Constants.randomImageUrl
+                coverUrl: Constants.randomImageUrl,
+                lastChapter: 400
             ),
             MangaDetail(
                 id: "mock-id-3",
                 coverId: "cover-3",
                 title: "Romance in Spring",
                 description: "A heartwarming romance set in a blooming town.",
-                coverUrl: Constants.randomImageUrl
+                coverUrl: Constants.randomImageUrl,
+                lastChapter: 100
             )
         ]
     }

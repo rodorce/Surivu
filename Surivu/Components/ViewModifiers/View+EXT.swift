@@ -24,4 +24,15 @@ extension View {
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .listRowBackground(Color.clear)
     }
+    
+    @ViewBuilder
+    func isHidden(_ hidden: Bool, remove: Bool = false) -> some View {
+        if hidden {
+            if !remove {
+                self.hidden() // invisible but keeps space
+            }
+        } else {
+            self
+        }
+    }
 }

@@ -50,6 +50,7 @@ class ExploreViewModel {
         mangas = []
         currentTask?.cancel()
         currentTask = Task {
+            isGridLoading = true
             try? await Task.sleep(for: .seconds(3))
             if Task.isCancelled { return }
                 do {
@@ -57,6 +58,7 @@ class ExploreViewModel {
                 } catch {
                     print("Could not retrieve searched mangas.")
                 }
+            isGridLoading = false
         }
     }
 }

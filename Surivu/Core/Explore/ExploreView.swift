@@ -13,6 +13,13 @@ struct ExploreView: View {
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             ScrollView {
+                if viewModel.isGridLoading {
+                    Text("Retrieving mangas...")
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
                 LazyVGrid(columns: viewModel.columns, spacing: 10) {
                     ForEach(viewModel.mangas, id:\.id) { manga in
                         VStack {
@@ -30,9 +37,6 @@ struct ExploreView: View {
                 .task {
                     await viewModel.loadMangas()
                 }
-            }
-            .refreshable {
-                await viewModel.loadMangas()
             }
             .navigationTitle("Explore")
             .navigationDestinationForTabbarModule(path: $viewModel.path)
