@@ -28,13 +28,13 @@ struct CoreInteractor {
         authManager.logOutMangadex()
     }
     
-    func getManga(id: Int) async throws -> Manga {
+    func getManga(id: String) async throws -> MangaDetail {
         try await mangaManager.getManga(id: id)
     }
     
-    func getMangas() async throws -> [Manga] {
-        if mangaManager.mangas.isEmpty {
-            try await mangaManager.getMangas()
+    func getMangasBy(title: String?, limit: Int?) async throws -> [MangaDetail] {
+        if mangaManager.mangas.isEmpty || title != nil {
+            try await mangaManager.getMangasBy(title: title, limit: limit)
         }
         return mangaManager.mangas
     }

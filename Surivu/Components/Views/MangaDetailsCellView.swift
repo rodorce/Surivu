@@ -14,10 +14,8 @@ struct MangaDetailsCellView: View {
     var cornerRadius: CGFloat = 16
     
     var body: some View {
-        VStack {
-            mangaDetailsHeader
-        }
-        .ignoresSafeArea()
+        mangaDetailsHeader
+            .ignoresSafeArea()
     }
     
     private var mangaDetailsHeader: some View {
@@ -26,32 +24,49 @@ struct MangaDetailsCellView: View {
                 AsyncImage(url: URL(string: imageUrl)) { phase in
                     switch phase {
                     case .empty:
-                        ProgressView()
+                        Rectangle()
+                            .fill(.thinMaterial)
+                            .frame(maxWidth: .infinity, maxHeight: 600)
+                            .overlay(alignment: .bottomLeading) {
+                                ZStack(alignment: .bottomLeading) {
+                                    Color.black.opacity(0.6)
+                                    mangaDetailsHeaderText
+                                }
+                            }
                     case .success(let image):
                         image
                             .resizable()
-                            .aspectRatio(1, contentMode: .fit)
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity, maxHeight: 600)
                             .overlay(alignment: .bottomLeading) {
-                                mangaDetailsHeaderText
+                                ZStack(alignment: .bottomLeading) {
+                                    Color.black.opacity(0.6)
+                                    mangaDetailsHeaderText
+                                }
                             }
-                            .cornerRadius(cornerRadius)
-
+                        
                     case .failure:
                         Rectangle()
                             .fill(.thinMaterial)
+                            .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: 600)
                             .overlay(alignment: .bottomLeading) {
-                                mangaDetailsHeaderText
+                                ZStack(alignment: .bottomLeading) {
+                                    Color.black.opacity(0.6)
+                                    mangaDetailsHeaderText
+                                }
                             }
-                            .cornerRadius(cornerRadius)
                     @unknown default:
                         Rectangle()
                             .fill(.thinMaterial)
+                            .scaledToFill()
                             .frame(maxWidth: .infinity, maxHeight: 600)
                             .overlay(alignment: .bottomLeading) {
-                                mangaDetailsHeaderText
+                                ZStack(alignment: .bottomLeading) {
+                                    Color.black.opacity(0.6)
+                                    mangaDetailsHeaderText
+                                }
                             }
-                            .cornerRadius(cornerRadius)
                     }
                 }
             }
@@ -69,21 +84,22 @@ struct MangaDetailsCellView: View {
     private var mangaDetailsHeaderText: some View {
         VStack {
             if let title, let description {
-            Text(title)
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .lineLimit(3)
-            Text(description)
-                .font(.subheadline)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .lineLimit(3)
-        }
+                Text(title)
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .shadow(radius: 3)
+                Text(description)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .minimumScaleFactor(0.5)
+                    .shadow(radius: 5)
+            }
         }
         .padding(16)
-        .addingGradientBackgroundForText()
     }
 }
 

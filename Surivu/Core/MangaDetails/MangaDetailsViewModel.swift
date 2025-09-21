@@ -8,7 +8,7 @@ import SwiftUI
 
 @MainActor
 protocol MangaDetailsInteractor {
-    func getManga(id: Int) async throws -> Manga
+    func getManga(id: String) async throws -> MangaDetail
 }
 
 extension CoreInteractor: MangaDetailsInteractor {}
@@ -17,17 +17,20 @@ extension CoreInteractor: MangaDetailsInteractor {}
 @Observable
 class MangaDetailsViewModel {
     let interactor: MangaDetailsInteractor
-    var manga: Manga?
+    var manga: MangaDetail?
+    private(set) var isLoading: Bool = false
     
     init(interactor: MangaDetailsInteractor) {
         self.interactor = interactor
     }
     
-    func loadManga(id: Int) async {
+    func loadManga(id: String) async {
+        isLoading = true
         do {
             manga = try await interactor.getManga(id: id)
         } catch {
             print("Could not retrieve manga")
         }
+        isLoading = false
     }
 }

@@ -8,6 +8,7 @@ import SwiftUI
 
 protocol AuthService {
     func signInMangadex(username: String, password: String) async throws -> AuthCredentials
+    func validateAccessToken()
     func logout()
 }
 
@@ -23,7 +24,7 @@ class MangaAuthService: AuthService {
             request.httpMethod = "POST"
             request.httpBody = loginFormData
             request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await URLSession.shared.data(for: request)
             let authCredentials = try JSONDecoder().decode(AuthCredentials.self, from: data)
             return authCredentials
         } catch {
@@ -35,5 +36,7 @@ class MangaAuthService: AuthService {
         
     }
     
-    
+    func validateAccessToken() {
+        
+    }
 }

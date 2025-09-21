@@ -6,5 +6,5 @@
 //
 
 struct Constants {
-    static let randomImageUrl = "https://picsum.photos/600/600"
+    static let randomImageUrl = "https://picsum.photos/1801/2560"
 }

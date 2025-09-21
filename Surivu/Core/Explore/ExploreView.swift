@@ -9,34 +9,41 @@ import SwiftUI
 
 struct ExploreView: View {
     @State var viewModel: ExploreViewModel
+    @Environment(\.dismissSearch) private var dismissSearch
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             ScrollView {
-                LazyVGrid(columns: viewModel.columns, spacing: 16) {
-                    ForEach(viewModel.mangas, id:\.self) { manga in
+                LazyVGrid(columns: viewModel.columns, spacing: 10) {
+                    ForEach(viewModel.mangas, id:\.id) { manga in
                         VStack {
-                            image(imageUrl: manga.imageUrl)
-                            Text(manga.title)
-                                .font(.headline)
+                            if let coverUrl = manga.coverUrl {
+                                image(imageUrl: coverUrl, mangaTitle: manga.title)
+                            }
                         }
                         .onTapGesture {
                             viewModel.onPressManga(mangaId: manga.id)
                         }
-                        .padding(.vertical, 10)
                         .redacted(reason: viewModel.isGridLoading ? .placeholder : [])
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 2)
                 .task {
                     await viewModel.loadMangas()
                 }
             }
+            .refreshable {
+                await viewModel.loadMangas()
+            }
             .navigationTitle("Explore")
             .navigationDestinationForTabbarModule(path: $viewModel.path)
         }
+        .searchable(text: $viewModel.searchText)
+        .onChange(of: viewModel.searchText, { _, newValue in
+            viewModel.searchByTitle(title: newValue, dismissSearch: dismissSearch)
+        })
     }
     
-    private func image(imageUrl: String) -> some View {
+    private func image(imageUrl: String, mangaTitle: String) -> some View {
         AsyncImage(url: URL(string: imageUrl)) { phase in
             switch phase {
             case .empty:
@@ -44,10 +51,21 @@ struct ExploreView: View {
             case .success(let image):
                 image
                     .resizable()
-                    .scaledToFit()
+                    .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity)
+                    .frame(height: 280)
                     .cornerRadius(8)
-                    .shadow(radius: 16)
+                    .overlay(alignment: .bottomLeading, content: {
+                        Text(mangaTitle)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 3)
+                            .font(.title3)
+                            .lineLimit(3)
+                            .frame(maxWidth: .infinity)
+                            .addingGradientBackgroundForText()
+                            .clipped()
+                    })
             case .failure:
                 EmptyView()
             @unknown default:

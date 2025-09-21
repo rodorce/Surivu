@@ -14,7 +14,7 @@ struct AuthManager {
         guard let credentials = localPersistenceManager.get(AuthCredentials.self, forKey: "auth_credentials") else { return "" }
         return credentials.accessToken
     }
-    var refreshToken: String? {
+    public var refreshToken: String? {
         guard let credentials = localPersistenceManager.get(AuthCredentials.self, forKey: "auth_credentials") else { return "" }
         return credentials.refreshToken
     }
@@ -32,5 +32,13 @@ struct AuthManager {
     
     func logOutMangadex() {
         localPersistenceManager.service.delete(forKey: "auth_credentials")
+    }
+    
+    func refreshMangadexToken() {
+        
+    }
+    
+    func validateAccessToken() {
+        
     }
 }

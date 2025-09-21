@@ -16,14 +16,14 @@ struct Dependencies {
 
     init() {
         self.localPersistenceManager = LocalPersistenceManager(service: KeychainService())
-        self.mangaManager = MangaManager(service: MockMangaService())
         self.authManager = AuthManager(service: MangaAuthService(), localPersistenceManager: localPersistenceManager)
+        self.mangaManager = MangaManager(service: RemoteMangaService(networkService: ProdNetworkService()))
         self.appState = AppState()
         
         let container = DependencyContainer()
-        container.register(MangaManager.self, service: mangaManager)
         container.register(AuthManager.self, service: authManager)
         container.register(LocalPersistenceManager.self, service: localPersistenceManager)
+        container.register(MangaManager.self, service: mangaManager)
         container.register(AppState.self, service: appState)
         self.container = container
     }

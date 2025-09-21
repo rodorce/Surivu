@@ -18,7 +18,7 @@ struct LoginRequest: Encodable {
         self.username = username
         self.password = password
         self.clientId = "personal-client-10fbf75d-f497-4f3c-86a2-19311bca5694-cd77558d"
-        self.clientSecret = "3giYVi5fk5f0PKyU8xd6ov0WveTGVXSx"
+        self.clientSecret = "awXGVoWHsgw0mHzRnv0IgxcTiLZQ4UsZ"
     }
     
     enum CodingKeys: String, CodingKey {
