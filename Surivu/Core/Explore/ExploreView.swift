@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct ExploreView: View {
     @State var viewModel: ExploreViewModel
@@ -47,34 +48,46 @@ struct ExploreView: View {
         })
     }
     
-    private func image(imageUrl: String, mangaTitle: String) -> some View {
-        AsyncImage(url: URL(string: imageUrl)) { phase in
-            switch phase {
-            case .empty:
-                ProgressView()
-            case .success(let image):
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+    private func placeholderImage(title: String) -> some View {
+        Rectangle()
+            .fill(Color.gray.opacity(0.3))
+            .frame(height: 280)
+            .cornerRadius(8)
+            .overlay(alignment: .bottomLeading, content: {
+                Text(title)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 3)
+                    .font(.title3)
+                    .lineLimit(3)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 280)
-                    .cornerRadius(8)
-                    .overlay(alignment: .bottomLeading, content: {
-                        Text(mangaTitle)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
-                            .padding(.vertical, 3)
-                            .font(.title3)
-                            .lineLimit(3)
-                            .frame(maxWidth: .infinity)
-                            .addingGradientBackgroundForText()
-                            .clipped()
-                    })
-            case .failure:
-                EmptyView()
-            @unknown default:
-                EmptyView()
-            }
+                    .addingGradientBackgroundForText()
+                    .clipped()
+            })
+            .redacted(reason: .placeholder)
+    }
+    private func image(imageUrl: String, mangaTitle: String) -> some View {
+        print("RENDERING IMAGE")
+        return WebImage(url: URL(string: imageUrl)) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: .infinity)
+                .frame(height: 280)
+                .cornerRadius(8)
+                .overlay(alignment: .bottomLeading, content: {
+                    Text(mangaTitle)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 3)
+                        .font(.title3)
+                        .lineLimit(3)
+                        .frame(maxWidth: .infinity)
+                        .addingGradientBackgroundForText()
+                        .clipped()
+                })
+        } placeholder: {
+            placeholderImage(title: mangaTitle)
         }
     }
 }

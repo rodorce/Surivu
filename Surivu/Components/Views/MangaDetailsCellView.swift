@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct MangaDetailsCellView: View {
     var title: String? = "Sample title"
@@ -20,67 +21,24 @@ struct MangaDetailsCellView: View {
     }
     
     private var mangaDetailsHeader: some View {
-        ZStack {
-            if let imageUrl {
-                AsyncImage(url: URL(string: imageUrl)) { phase in
-                    switch phase {
-                    case .empty:
-                        Rectangle()
-                            .fill(.thinMaterial)
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: 600)
-                            .blur(radius: 3)
-                            .overlay(alignment: .bottomLeading) {
-                                mangaHeaderOverlay
-                            }
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: 600)
-                            .blur(radius: 3)
-                            .overlay(alignment: .bottomLeading) {
-                                mangaHeaderOverlay
-                            }
-                        
-                    case .failure:
-                        Rectangle()
-                            .fill(.thinMaterial)
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: 600)
-                            .blur(radius: 3)
-                            .overlay(alignment: .bottomLeading) {
-                                mangaHeaderOverlay
-                            }
-                    @unknown default:
-                        Rectangle()
-                            .fill(.thinMaterial)
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: 570)
-                            .overlay(alignment: .bottomLeading) {
-                                ZStack(alignment: .bottomLeading) {
-                                    Color.black.opacity(0.6)
-                                    VStack {
-                                        mangaDetailsHeaderText
-                                        Button {
-                                            expandDescription.toggle()
-                                        } label: {
-                                            Text(expandDescription ? "Show less" : "Show more")
-                                        }
-                                    }
-                                }
-                            }
-                    }
+        WebImage(url: URL(string: imageUrl!)) { image in
+            image
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: 600)
+                .blur(radius: 3)
+                .overlay(alignment: .bottomLeading) {
+                    mangaHeaderOverlay
                 }
-            }
-            else {
-                Rectangle()
-                    .fill(.thinMaterial)
-                    .frame(maxWidth: .infinity, maxHeight: 600)
-                    .overlay(alignment: .bottomLeading) {
-                        mangaDetailsHeaderText
-                    }
-            }
+        } placeholder: {
+            Rectangle()
+                .fill(.thinMaterial)
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: 600)
+                .blur(radius: 3)
+                .overlay(alignment: .bottomLeading) {
+                    mangaHeaderOverlay
+                }
         }
     }
     
@@ -101,7 +59,6 @@ struct MangaDetailsCellView: View {
                     .animation(.easeInOut, value: expandDescription)
             }
         }
-        .padding(16)
     }
     
     private var mangaHeaderOverlay: some View {
@@ -109,6 +66,7 @@ struct MangaDetailsCellView: View {
             Color.black.opacity(0.6)
             VStack(alignment: .leading) {
                 mangaDetailsHeaderText
+                    .padding(10)
                 if description.count > 300 {
                     Button {
                         expandDescription.toggle()
@@ -117,8 +75,8 @@ struct MangaDetailsCellView: View {
                             .foregroundStyle(.white)
                             .fontWeight(.semibold)
                     }
+                    .padding(10)
                     .buttonStyle(.bordered)
-                    .backgroundStyle(.blue)
                 }
             }
         }

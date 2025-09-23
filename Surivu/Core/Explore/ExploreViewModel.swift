@@ -35,7 +35,7 @@ class ExploreViewModel {
     func loadMangas() async {
         isGridLoading = true
         do {
-            mangas = try await interactor.getMangasBy(title: nil, limit: nil)
+            mangas = try await interactor.getMangasBy(title: nil, limit: 20)
         } catch {
             print("Error retrieving mangas list \(error)")
         }
@@ -54,7 +54,7 @@ class ExploreViewModel {
             try? await Task.sleep(for: .seconds(3))
             if Task.isCancelled { return }
                 do {
-                    mangas = try await interactor.getMangasBy(title: title, limit: nil)
+                    mangas = try await interactor.getMangasBy(title: title, limit: 12)
                 } catch {
                     print("Could not retrieve searched mangas.")
                 }

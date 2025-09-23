@@ -21,7 +21,6 @@ class LoginViewModel {
     let interactor: LoginInteractor
     var username: String = ""
     var password: String = ""
-    var path: [AuthPathOption] = []
     
     init(interactor: LoginInteractor) {
         self.interactor = interactor

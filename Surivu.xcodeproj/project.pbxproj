@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		31FEFA512E8346E500F4DB8A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 31FEFA502E8346E500F4DB8A /* SDWebImageSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		313B91FD2E7CF69E00D17944 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31FEFA512E8346E500F4DB8A /* SDWebImageSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +96,7 @@
 				313B91F12E7CF69D00D17944 /* Surivu */,
 				313B91FF2E7CF69E00D17944 /* SurivuTests */,
 				313B92092E7CF69E00D17944 /* SurivuUITests */,
+				31FEFA4F2E8346E500F4DB8A /* Frameworks */,
 				313B91F02E7CF69D00D17944 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +109,13 @@
 				313B92062E7CF69E00D17944 /* SurivuUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		31FEFA4F2E8346E500F4DB8A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,6 +138,7 @@
 			);
 			name = Surivu;
 			packageProductDependencies = (
+				31FEFA502E8346E500F4DB8A /* SDWebImageSwiftUI */,
 			);
 			productName = Surivu;
 			productReference = 313B91EF2E7CF69D00D17944 /* Surivu.app */;
@@ -208,6 +222,9 @@
 			);
 			mainGroup = 313B91E62E7CF69D00D17944;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				31FEFA4E2E83460A00F4DB8A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 313B91F02E7CF69D00D17944 /* Products */;
 			projectDirPath = "";
@@ -636,6 +653,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		31FEFA4E2E83460A00F4DB8A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		31FEFA502E8346E500F4DB8A /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 31FEFA4E2E83460A00F4DB8A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 313B91E72E7CF69D00D17944 /* Project object */;
 }

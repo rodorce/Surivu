@@ -5,6 +5,7 @@
 //  Created by Rodolfo Ramirez on 20/09/25.
 //
 import Foundation
+import Combine
 
 struct ProdNetworkService: NetworkService {
     func makeNetworkRequest<T: Codable>(endpoint: String, responseType: T.Type) async throws -> [T] {
@@ -66,5 +67,12 @@ struct ProdNetworkService: NetworkService {
     }
     
     func makeAuthNetworkRequest<T: Codable>(endpoint: String, responseType: T.Type) async throws {
+        let url = URL(string: "")!
+        URLSession.shared.dataTaskPublisher(for: url)
+            .subscribe(on: DispatchQueue.global(qos: .background)) // background thread
+            .map { $0.data }                                        // extract Data
+            .decode(type: [MangaEntity].self, decoder: JSONDecoder())    // decode JSON into model
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()// back to main thread
     }
 }
