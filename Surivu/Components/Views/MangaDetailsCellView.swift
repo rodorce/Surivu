@@ -56,9 +56,9 @@ struct MangaDetailsCellView: View {
                     .foregroundStyle(.white)
                     .shadow(radius: 5)
                     .lineLimit(expandDescription ? nil : 6)
-                    .animation(.easeInOut, value: expandDescription)
             }
         }
+        .animation(.easeInOut, value: expandDescription)
     }
     
     private var mangaHeaderOverlay: some View {

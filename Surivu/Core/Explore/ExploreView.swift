@@ -13,14 +13,17 @@ struct ExploreView: View {
     @Environment(\.dismissSearch) private var dismissSearch
     var body: some View {
         NavigationStack(path: $viewModel.path) {
-            ScrollView {
-                if viewModel.isGridLoading {
+            if viewModel.isGridLoading {
+                VStack {
+                    ProgressView()
                     Text("Retrieving mangas...")
                         .fontWeight(.bold)
                         .foregroundStyle(.secondary)
                         .font(.headline)
-                        .frame(maxWidth: .infinity)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            ScrollView {
                 LazyVGrid(columns: viewModel.columns, spacing: 10) {
                     ForEach(viewModel.mangas, id:\.id) { manga in
                         VStack {

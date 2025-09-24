@@ -29,9 +29,14 @@ struct MangaDetailsView: View {
                             if let chapters = viewModel.chapters {
                                 ForEach(chapters, id:\.id) { chapter in
                                     HStack {
-                                        Text(viewModel.formatChapterTitle(title: chapter.title, chapterNumber: chapter.chapter))
-                                            .fontWeight(.bold)
-                                            .font(.subheadline)
+                                        VStack(alignment: .leading) {
+                                            Text(viewModel.formatChapterTitle(title: chapter.title, chapterNumber: chapter.chapter))
+                                                .fontWeight(.bold)
+                                                .font(.subheadline)
+                                            Text(chapter.createdAt.formatted(date: .abbreviated, time: .omitted))
+                                                .fontWeight(.semibold)
+                                                .font(.caption)
+                                        }
                                         Spacer()
                                         Text(chapter.translatedLanguage)
                                             .padding(.trailing, 10)
