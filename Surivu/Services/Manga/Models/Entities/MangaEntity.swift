@@ -27,6 +27,9 @@ struct MangaEntity: Codable, Identifiable {
                 updatedAt: Date.now,
                 version: 1,
                 latestUploadedChapter: "chapter_id",
+                tags: [
+                    MangaTag(id: "tag_1", type: .tag, attributes: TagAttributes(name: Title(en: "Historical"), group: .genre, version: 1))
+                ]
             ),
             relationships: [
                 Relationship(
@@ -60,7 +63,10 @@ struct MangaEntity: Codable, Identifiable {
                     createdAt: Date.now,
                     updatedAt: Date.now,
                     version: 1,
-                    latestUploadedChapter: "chapter_id"
+                    latestUploadedChapter: "chapter_id",
+                    tags: [
+                        MangaTag(id: "tag_1", type: .tag, attributes: TagAttributes(name: Title(en: "Historical"), group: .genre, version: 1))
+                    ]
                 ),
                 relationships: [
                     Relationship(
@@ -90,7 +96,10 @@ struct MangaEntity: Codable, Identifiable {
                     createdAt: Date.now,
                     updatedAt: Date.now,
                     version: 1,
-                    latestUploadedChapter: "chapter_20"
+                    latestUploadedChapter: "chapter_20",
+                    tags: [
+                        MangaTag(id: "tag_1", type: .tag, attributes: TagAttributes(name: Title(en: "Historical"), group: .genre, version: 1))
+                    ]
                 ),
                 relationships: [
                     Relationship(
@@ -120,7 +129,10 @@ struct MangaEntity: Codable, Identifiable {
                     createdAt: Date.now,
                     updatedAt: Date.now,
                     version: 1,
-                    latestUploadedChapter: "chapter_15"
+                    latestUploadedChapter: "chapter_15",
+                    tags: [
+                        MangaTag(id: "tag_1", type: .tag, attributes: TagAttributes(name: Title(en: "Historical"), group: .genre, version: 1))
+                    ]
                 ),
                 relationships: [
                     Relationship(
@@ -150,7 +162,10 @@ struct MangaEntity: Codable, Identifiable {
                     createdAt: Date.now,
                     updatedAt: Date.now,
                     version: 1,
-                    latestUploadedChapter: "chapter_30"
+                    latestUploadedChapter: "chapter_30",
+                    tags: [
+                        MangaTag(id: "tag_1", type: .tag, attributes: TagAttributes(name: Title(en: "Historical"), group: .genre, version: 1))
+                    ]
                 ),
                 relationships: [
                     Relationship(
@@ -182,6 +197,7 @@ struct MangaAttributes: Codable {
     let createdAt, updatedAt: Date?
     let version: Int?
     let latestUploadedChapter: String?
+    let tags: [MangaTag]
 }
 
 
@@ -214,7 +230,7 @@ enum Status: String, Codable {
 }
 
 // MARK: - Tag
-struct Tag: Codable {
+struct MangaTag: Codable {
     let id: String
     let type: TagType
     let attributes: TagAttributes

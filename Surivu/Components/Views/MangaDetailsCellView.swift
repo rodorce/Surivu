@@ -13,11 +13,20 @@ struct MangaDetailsCellView: View {
     var description: String = "Description for the manga."
     var imageUrl: String? = Constants.randomImageUrl
     var cornerRadius: CGFloat = 16
+    var genres: [MangaGenre] = [.unknown]
     @State var expandDescription: Bool = false
+    let genreGridColumns: [GridItem] = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
     
     var body: some View {
         mangaDetailsHeader
             .ignoresSafeArea()
+            .onAppear {
+            }
     }
     
     private var mangaDetailsHeader: some View {
@@ -61,11 +70,28 @@ struct MangaDetailsCellView: View {
         .animation(.easeInOut, value: expandDescription)
     }
     
+    private var mangaGenres: some View {
+        LazyVGrid(columns: genreGridColumns, alignment: .leading) {
+            ForEach(Array(genres.enumerated()), id: \.offset) { index, genre in
+                Text(genre.rawValue)
+                    .font(.caption)
+                    .padding(10)
+                    .foregroundStyle(.white)
+                    .background(Color.secondary.opacity(0.50))
+                    .cornerRadius(10)
+                    .frame(maxWidth: .infinity)
+                    .tag(index)
+            }
+        }
+    }
+    
     private var mangaHeaderOverlay: some View {
         ZStack(alignment: .bottomLeading) {
             Color.black.opacity(0.6)
             VStack(alignment: .leading) {
                 mangaDetailsHeaderText
+                    .padding(10)
+                mangaGenres
                     .padding(10)
                 if description.count > 300 {
                     Button {

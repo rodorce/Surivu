@@ -13,42 +13,59 @@ struct ExploreView: View {
     @Environment(\.dismissSearch) private var dismissSearch
     var body: some View {
         NavigationStack(path: $viewModel.path) {
-            if viewModel.isGridLoading {
-                VStack {
-                    ProgressView()
-                    Text("Retrieving mangas...")
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                        .font(.headline)
+            VStack {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(MangaGenre.allCases, id: \.self) { genre in
+                            Text(genre.rawValue)
+                                .tag(genre)
+                                .padding(10)
+                                .background(Color(uiColor: .secondarySystemBackground))
+                                .cornerRadius(10)
+                                .onTapGesture {
+                                    viewModel.filterMangaByGenre(genre: genre)
+                                }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            ScrollView {
-                LazyVGrid(columns: viewModel.columns, spacing: 10) {
-                    ForEach(viewModel.mangas, id:\.id) { manga in
-                        VStack {
+                .padding(.horizontal, 10)
+                if viewModel.isGridLoading {
+                    VStack {
+                        ProgressView()
+                        Text("Retrieving mangas...")
+                            .fontWeight(.bold)
+                            .foregroundStyle(.secondary)
+                            .font(.headline)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                ScrollView {
+                    LazyVGrid(columns: viewModel.columns, spacing: 10) {
+                        ForEach(viewModel.mangas, id:\.id) { manga in
                             if let coverUrl = manga.coverUrl {
                                 image(imageUrl: coverUrl, mangaTitle: manga.title)
+                                    .onTapGesture {
+                                        viewModel.onPressManga(mangaId: manga.id)
+                                    }
                             }
                         }
-                        .onTapGesture {
-                            viewModel.onPressManga(mangaId: manga.id)
-                        }
-                        .redacted(reason: viewModel.isGridLoading ? .placeholder : [])
+                    }
+                    .padding(.horizontal, 2)
+                    .task {
+                        await viewModel.loadMangas()
                     }
                 }
-                .padding(.horizontal, 2)
-                .task {
-                    await viewModel.loadMangas()
-                }
+                
             }
             .navigationTitle("Explore")
             .navigationDestinationForTabbarModule(path: $viewModel.path)
+            .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always))
+            .onChange(of: viewModel.searchText, { _, newValue in
+                viewModel.searchByTitle(title: newValue, dismissSearch: dismissSearch)
+            })
         }
-        .searchable(text: $viewModel.searchText)
-        .onChange(of: viewModel.searchText, { _, newValue in
-            viewModel.searchByTitle(title: newValue, dismissSearch: dismissSearch)
-        })
+
     }
     
     private func placeholderImage(title: String) -> some View {
@@ -70,7 +87,6 @@ struct ExploreView: View {
             .redacted(reason: .placeholder)
     }
     private func image(imageUrl: String, mangaTitle: String) -> some View {
-        print("RENDERING IMAGE")
         return WebImage(url: URL(string: imageUrl)) { image in
             image
                 .resizable()

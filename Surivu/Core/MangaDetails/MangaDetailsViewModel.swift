@@ -8,7 +8,7 @@ import SwiftUI
 
 @MainActor
 protocol MangaDetailsInteractor {
-    func getManga(id: String) async throws -> MangaDetail
+    func getManga(id: String) async throws -> MangaDetail?
     func getChapters(byMangaId: String, limit: Int?, offset: Int) async throws -> [ChapterDetail]
 }
 

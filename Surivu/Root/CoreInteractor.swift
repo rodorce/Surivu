@@ -31,19 +31,21 @@ struct CoreInteractor {
     }
     
     //MARK: MangaManager
-    func getManga(id: String) async throws -> MangaDetail {
+    func getManga(id: String) async throws -> MangaDetail? {
         try await mangaManager.getManga(id: id)
     }
     
-    func getMangasBy(title: String?, limit: Int?) async throws -> [MangaDetail] {
-        if mangaManager.mangas.isEmpty || title != nil {
-            try await mangaManager.getMangasBy(title: title, limit: limit)
+    func getMangasBy(request: MangaRequest) async throws -> [MangaDetail] {
+        if mangaManager.mangas.isEmpty || request.title != nil || request.genres != nil {
+            try await mangaManager.getMangasBy(request: request)
+            return mangaManager.mangas
         }
         return mangaManager.mangas
     }
     
     func getChapters(byMangaId: String, limit: Int?, offset: Int) async throws -> [ChapterDetail] {
-        try await mangaManager.getChapters(mangaId: byMangaId, limit: limit, offset: offset)
+        let chaptersRequest = ChapterRequest(mangaId: byMangaId, limit: String(limit ?? 100), offset: String(offset))
+        return try await mangaManager.getChapters(request: chaptersRequest)
     }
     
     func getChapterImages(chapterId: String) async throws -> [String] {

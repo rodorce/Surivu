@@ -11,6 +11,7 @@ struct APIListResponse<T: Codable>: Codable {
     let data: [T]
 }
 
+@MainActor
 struct APIObjectResponse<T: Codable>: Codable {
     let data: T
 }

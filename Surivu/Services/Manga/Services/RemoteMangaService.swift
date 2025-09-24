@@ -7,14 +7,32 @@
 import Foundation
 import SwiftUI
 
+
 struct RemoteMangaService: MangaService {
     let networkService: NetworkService
     
-    func getMangasBy(title: String, limit: String) async throws -> [MangaDetail] {
-        let mangaEntities: [MangaEntity] = try await networkService.makeNetworkRequest(
-            endpoint: "\(Endpoints.mangas)?limit=\(limit)&title=\(title)",
-            responseType: MangaEntity.self
-        )
+    //MARK: - Manga Details
+    func getMangas(endpoint: String) async throws -> [MangaDetail] {
+        let mangaEntities: [MangaEntity] = try await generateMangaEntities(endpoint: endpoint)
+        let mangaDetails: [MangaDetail] = try await generateMangaDetails(mangaEntities: mangaEntities)
+        return mangaDetails
+    }
+    
+    func getManga(mangas: [MangaDetail], id: String) -> MangaDetail? {
+        return mangas.first(where: {$0.id == id})
+    }
+    
+    func getCover(coverArtId: String) async throws -> CoverEntity {
+        let data = try await networkService.makeNetworkRequest(endpoint: "\(Endpoints.cover)/\(coverArtId)")
+        return try decode(APIObjectResponse<CoverEntity>.self, from: data).data
+    }
+    
+    private func generateMangaEntities(endpoint: String) async throws -> [MangaEntity] {
+        let data = try await networkService.makeNetworkRequest(endpoint: endpoint)
+        return try decode(APIListResponse<MangaEntity>.self, from: data).data
+    }
+    
+    private func generateMangaDetails(mangaEntities: [MangaEntity]) async throws -> [MangaDetail] {
         return try await withThrowingTaskGroup(of: MangaDetail.self) { group in
             for mangaEntity in mangaEntities {
                 group.addTask {
@@ -25,7 +43,8 @@ struct RemoteMangaService: MangaService {
                         title: mangaEntity.attributes.title?.en ?? "",
                         description: mangaEntity.attributes.description?.en ?? "",
                         coverUrl: "\(Endpoints.coversImageUrl)/\(mangaEntity.id)/\(coverEntity.attributes.fileName)",
-                        lastChapter: Int(mangaEntity.attributes.lastChapter ?? "0") ?? 0
+                        lastChapter: Int(mangaEntity.attributes.lastChapter ?? "0") ?? 0,
+                        genres: mangaEntity.attributes.tags.map { MangaGenre(rawValue: $0.attributes.name.en ?? "") ?? .unknown }
                     )
                 }
             }
@@ -38,33 +57,32 @@ struct RemoteMangaService: MangaService {
         }
     }
     
-    func getCover(coverArtId: String) async throws -> CoverEntity {
-        return try await networkService.makeAuthNetworkRequest(endpoint: "\(Endpoints.cover)/\(coverArtId)", responseType: CoverEntity.self)
-        
-    }
-    
-    func getManga(mangas: [MangaDetail]?, id: String) async throws -> MangaDetail {
-        return mangas?.first(where: {$0.id == id}) ?? MangaDetail.mock
-    }
-    
-    func getChapters(byMangaId: String, limit: Int, offset: Int) async throws -> [ChapterDetail] {
-        let chapterEntities: [ChapterEntity] = try await networkService.makeNetworkRequest(
-            endpoint: "\(Endpoints.chapter)?limit=\(limit)&manga=\(byMangaId)&offset=\(offset)&translatedLanguage%5B%5D=en&order%5BcreatedAt%5D=desc&order%5BupdatedAt%5D=desc&order%5BpublishAt%5D=desc&order%5BreadableAt%5D=desc&order%5Bvolume%5D=desc&order%5Bchapter%5D=desc&",
-            responseType: ChapterEntity.self
-        )
-        
+    //MARK: - Chapters
+    func getChapters(endpoint: String) async throws -> [ChapterDetail] {
+        guard let chapterEntities: [ChapterEntity] = try await generateChapterEntities(endpoint: endpoint) else {
+            return []
+        }
         return chapterEntities.map { entity in
             ChapterDetail(chapterEntity: entity)
         }
     }
     
-    func getChapterImages(chapterId: String) async throws -> [String] {
-        let chapterMetadataEntity: ChapterMetadataEntity = try await networkService.makeNetworkRequestWithoutObjectResponseType(endpoint: "\(Endpoints.chapterMetadata)/\(chapterId)", responseType: ChapterMetadataEntity.self)
-        print("METADATA", chapterMetadataEntity)
+    func getChapterImages(endpoint: String) async throws -> [String] {
+        let chapterMetadataEntity = try await getChapterMetadataEntity(endpoint: endpoint)
         let chapterImages: [String] = chapterMetadataEntity.chapter.dataSaver.map { imageId in
             return "\(chapterMetadataEntity.baseURL)/data-saver/\(chapterMetadataEntity.chapter.hash)/\(imageId)"
         }
         return chapterImages
-        
     }
+    
+    private func getChapterMetadataEntity(endpoint: String) async throws -> ChapterMetadataEntity {
+        let data = try await networkService.makeNetworkRequest(endpoint: endpoint)
+        return try decode(ChapterMetadataEntity.self, from: data)
+    }
+    
+    private func generateChapterEntities(endpoint: String) async throws -> [ChapterEntity]? {
+        let data = try await networkService.makeNetworkRequest(endpoint: endpoint)
+        return try decode(APIListResponse<ChapterEntity>.self, from: data).data
+    }
+    
 }

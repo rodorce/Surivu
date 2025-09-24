@@ -4,21 +4,22 @@
 //
 //  Created by Rodolfo Ramirez on 20/09/25.
 //
+import Foundation
 
 struct MockMangaService: MangaService {
-    func getMangasBy(title: String, limit: String) async throws -> [MangaDetail] {
-        return MangaDetail.mocks
+    func getMangas(endpoint: String) async throws -> [MangaDetail] {
+        MangaDetail.mocks
     }
     
-    func getManga(mangas: [MangaDetail]?, id: String) async throws -> MangaDetail {
-        return MangaDetail.mock
+    func getManga(mangas: [MangaDetail], id: String) async throws -> MangaDetail? {
+        MangaDetail.mock
     }
     
-    func getChapters(byMangaId: String, limit: Int, offset: Int) async throws -> [ChapterDetail] {
-        return ChapterDetail.mocks
+    func getChapters(endpoint: String) async throws -> [ChapterDetail] {
+        ChapterDetail.mocks
     }
     
-    func getChapterImages(chapterId: String) async throws -> [String] {
-        [Constants.randomImageUrl, Constants.randomImageUrl, Constants.randomImageUrl]
+    func getChapterImages(endpoint: String) async throws -> [String] {
+        [Constants.randomImageUrl, Constants.randomImageUrl]
     }
 }
