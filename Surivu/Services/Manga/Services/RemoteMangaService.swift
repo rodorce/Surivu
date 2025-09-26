@@ -14,13 +14,13 @@ struct RemoteMangaService: MangaService {
     //MARK: - Manga Details
     func getMangas(title: String?, limit: String?, genres: [MangaGenre]?) async throws -> [MangaEntity] {
         let queryItems = generateMangaQueryItems(title: title, limit: limit, genres: genres)
-        let endpoint = GetMangasEndpoint(method: .get, urlQueryItems: queryItems)
+        let endpoint = MangaEndpoint.getMangas(httpParams: queryItems)
         let request = try URLRequest(endpoint: endpoint)
         return try await generateMangaEntities(request: request)
     }
     
     func getCover(coverArtId: String) async throws -> CoverEntity {
-        let coverEndpoint = MangaCoversEndpoint(path: "cover/\(coverArtId)")
+        let coverEndpoint = MangaEndpoint.getCovers(coverId: coverArtId)
         let request = try URLRequest(endpoint: coverEndpoint)
         let data = try await networkService.makeNetworkRequest(request: request)
         return try decode(APIObjectResponse<CoverEntity>.self, from: data).data
@@ -36,7 +36,7 @@ struct RemoteMangaService: MangaService {
     }
     
     func getChapterImages(chapterId: String) async throws -> [String] {
-        let endpoint = ChaptersMetadataEndpoint(path: "at-home/server/\(chapterId)")
+        let endpoint = ChapterEndpoint.getMetadata(chapterId: chapterId)
         let request = try URLRequest(endpoint: endpoint)
         let chapterMetadataEntity = try await getChapterMetadataEntity(request: request)
         let chapterImages: [String] = chapterMetadataEntity.chapter.dataSaver.map { imageId in
@@ -84,7 +84,7 @@ struct RemoteMangaService: MangaService {
             URLQueryItem(name: "manga", value: mangaId),
             URLQueryItem(name: "offset", value: String(offset)),
         ]
-        let endpoint = ChaptersEndpoint(urlQueryItems: queries)
+        let endpoint = ChapterEndpoint.getChapters(httpParams: queries)
         return try URLRequest(endpoint: endpoint)
     }
 }

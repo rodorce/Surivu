@@ -46,9 +46,7 @@ class MangaManager {
                     let coverArtId = mangaEntity.relationships.first(where: {$0.type == .coverArt})?.id ?? ""
                     let coverEntity: CoverEntity = try await self.service.getCover(coverArtId: coverArtId)
                     let coverUrl = try await URLRequest(
-                        endpoint: CoversImageEndpoint(
-                            path: "covers/\(mangaEntity.id)/\(coverEntity.attributes.fileName)"
-                        )
+                        endpoint: CoversImageEndpoint.getImage(mangaId: mangaEntity.id, imageId: coverEntity.attributes.fileName)
                     ).url?.absoluteString
                     return await MangaDetail(
                         id: mangaEntity.id,
