@@ -26,6 +26,26 @@ struct RemoteMangaService: MangaService {
         return try decode(APIObjectResponse<CoverEntity>.self, from: data).data
     }
     
+    //MARK: - Chapters
+    func getChapters(mangaId: String, limit: Int?, offset: Int) async throws -> [ChapterEntity] {
+        let request = try generateChapterRequest(mangaId: mangaId, limit: limit, offset: offset)
+        guard let chapterEntities: [ChapterEntity] = try await generateChapterEntities(request: request) else {
+            return []
+        }
+        return chapterEntities
+    }
+    
+    func getChapterImages(chapterId: String) async throws -> [String] {
+        let endpoint = ChaptersMetadataEndpoint(path: "at-home/server/\(chapterId)")
+        let request = try URLRequest(endpoint: endpoint)
+        let chapterMetadataEntity = try await getChapterMetadataEntity(request: request)
+        let chapterImages: [String] = chapterMetadataEntity.chapter.dataSaver.map { imageId in
+            return "\(chapterMetadataEntity.baseURL)/data-saver/\(chapterMetadataEntity.chapter.hash)/\(imageId)"
+        }
+        return chapterImages
+    }
+    
+    //MARK: - Helper Functions - Manga
     private func generateMangaQueryItems(title: String?, limit: String?, genres: [MangaGenre]?) -> [URLQueryItem] {
         var queries: [URLQueryItem] = []
         if let title = title {
@@ -47,25 +67,7 @@ struct RemoteMangaService: MangaService {
         return try decode(APIListResponse<MangaEntity>.self, from: data).data
     }
     
-    //MARK: - Chapters
-    func getChapters(mangaId: String, limit: Int?, offset: Int) async throws -> [ChapterEntity] {
-        let request = try generateChapterRequest(mangaId: mangaId, limit: limit, offset: offset)
-        guard let chapterEntities: [ChapterEntity] = try await generateChapterEntities(request: request) else {
-            return []
-        }
-        return chapterEntities
-    }
-    
-    func getChapterImages(chapterId: String) async throws -> [String] {
-        let endpoint = ChaptersMetadataEndpoint(path: "at-home/server/\(chapterId)")
-        let request = try URLRequest(endpoint: endpoint)
-        let chapterMetadataEntity = try await getChapterMetadataEntity(request: request)
-        let chapterImages: [String] = chapterMetadataEntity.chapter.dataSaver.map { imageId in
-            return "\(chapterMetadataEntity.baseURL)/data-saver/\(chapterMetadataEntity.chapter.hash)/\(imageId)"
-        }
-        return chapterImages
-    }
-    
+    //MARK: - Helper Functions - Chapters
     private func getChapterMetadataEntity(request: URLRequest) async throws -> ChapterMetadataEntity {
         let data = try await networkService.makeNetworkRequest(request: request)
         return try decode(ChapterMetadataEntity.self, from: data)

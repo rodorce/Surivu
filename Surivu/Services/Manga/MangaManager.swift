@@ -38,7 +38,7 @@ class MangaManager {
         return try await service.getChapterImages(chapterId: chapterId)
     }
     
-    //MARK: - Helper Functions
+    //MARK: - Helper Functions - Mangas
     private func generateMangaDetails(mangaEntities: [MangaEntity]) async throws -> [MangaDetail] {
         return try await withThrowingTaskGroup(of: MangaDetail.self) { group in
             for mangaEntity in mangaEntities {
