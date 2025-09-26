@@ -7,19 +7,21 @@
 import Foundation
 
 struct MockMangaService: MangaService {
-    func getMangas(endpoint: String) async throws -> [MangaDetail] {
-        MangaDetail.mocks
+    func getMangas(title: String?, limit: String?, genres: [MangaGenre]?) async throws -> [MangaEntity] {
+        MangaEntity.mocks
     }
     
-    func getManga(mangas: [MangaDetail], id: String) async throws -> MangaDetail? {
-        MangaDetail.mock
+    func getChapters(mangaId: String, limit: Int?, offset: Int) async throws -> [ChapterEntity] {
+        []
     }
     
-    func getChapters(endpoint: String) async throws -> [ChapterDetail] {
-        ChapterDetail.mocks
+    func getChapterImages(chapterId: String) async throws -> [String] {
+        [Constants.randomImageUrl]
     }
     
-    func getChapterImages(endpoint: String) async throws -> [String] {
-        [Constants.randomImageUrl, Constants.randomImageUrl]
+    func getCover(coverArtId: String) async throws -> CoverEntity {
+        CoverEntity(id: "", type: "", attributes: CoverAttributes(description: "", fileName: "", locale: "", volume: "", createdAt: .now, updatedAt: .now, version: 1))
     }
+    
+    
 }

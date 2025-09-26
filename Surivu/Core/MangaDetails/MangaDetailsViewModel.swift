@@ -5,8 +5,8 @@
 //  Created by Rodolfo Ramirez on 19/09/25.
 //
 import SwiftUI
+import Combine
 
-@MainActor
 protocol MangaDetailsInteractor {
     func getManga(id: String) async throws -> MangaDetail?
     func getChapters(byMangaId: String, limit: Int?, offset: Int) async throws -> [ChapterDetail]
@@ -15,13 +15,12 @@ protocol MangaDetailsInteractor {
 extension CoreInteractor: MangaDetailsInteractor {}
 
 @MainActor
-@Observable
-class MangaDetailsViewModel {
+class MangaDetailsViewModel: ObservableObject {
     let interactor: MangaDetailsInteractor
-    var manga: MangaDetail?
-    var chapters: [ChapterDetail]?
-    var offset: Int = 0
-    private(set) var isLoading: Bool = false
+    @Published var manga: MangaDetail?
+    @Published var chapters: [ChapterDetail]?
+    @Published var offset: Int = 0
+    @Published private(set) var isLoading: Bool = false
     func formatChapterTitle(title: String, chapterNumber: String) -> String {
         title.isEmpty ? "Chapter \(chapterNumber)" : "\(chapterNumber) \(title)"
     }

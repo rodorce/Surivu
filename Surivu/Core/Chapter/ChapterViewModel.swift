@@ -5,6 +5,7 @@
 //  Created by Rodolfo Ramirez on 21/09/25.
 //
 import SwiftUI
+import Combine
 
 protocol ChapterInteractor {
     func getChapterImages(chapterId: String) async throws -> [String]
@@ -13,10 +14,9 @@ protocol ChapterInteractor {
 extension CoreInteractor: ChapterInteractor {}
 
 @MainActor
-@Observable
-class ChapterViewModel {
-    var chapterImages: [String] = [""]
-    var currentImage: Int = 0
+class ChapterViewModel: ObservableObject {
+    @Published var chapterImages: [String] = []
+    @Published var currentImage: Int = 0
     let interactor: ChapterInteractor
     
     init(interactor: ChapterInteractor) {

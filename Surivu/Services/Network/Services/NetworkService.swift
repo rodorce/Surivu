@@ -9,5 +9,5 @@ import SwiftUI
 
 @MainActor
 protocol NetworkService {
-    func makeNetworkRequest(endpoint: String) async throws -> Data
+    func makeNetworkRequest(request: URLRequest) async throws -> Data
 }

@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
-
+import Combine
 struct MangaDetailsView: View {
-    @State var viewModel: MangaDetailsViewModel
+    @StateObject var viewModel: MangaDetailsViewModel
     var mangaId: String = MangaEntity.mock.id
     @Binding var path: [TabbarPathOption]
     var body: some View {

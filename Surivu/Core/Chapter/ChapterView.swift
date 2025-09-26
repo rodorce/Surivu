@@ -11,7 +11,7 @@ import SDWebImageSwiftUI
 struct ChapterView: View {
     @State var chapterId: String = ""
     var title: String = ""
-    @State var viewModel: ChapterViewModel
+    @StateObject var viewModel: ChapterViewModel
     var body: some View {
         ZStack {
             VStack {
@@ -20,28 +20,30 @@ struct ChapterView: View {
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
-                WebImage(url: URL(string: viewModel.chapterImages[viewModel.currentImage])) { image in
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .overlay {
-                            HStack {
-                                Rectangle()
-                                    .opacity(0.01)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .onTapGesture {
-                                        viewModel.loadPreviousImage()
-                                    }
-                                Rectangle()
-                                    .opacity(0.01)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .onTapGesture {
-                                        viewModel.loadNextImage()
-                                    }
+                if !viewModel.chapterImages.isEmpty {
+                    WebImage(url: URL(string: viewModel.chapterImages[viewModel.currentImage])) { image in
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .overlay {
+                                HStack {
+                                    Rectangle()
+                                        .opacity(0.01)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .onTapGesture {
+                                            viewModel.loadPreviousImage()
+                                        }
+                                    Rectangle()
+                                        .opacity(0.01)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .onTapGesture {
+                                            viewModel.loadNextImage()
+                                        }
+                                }
                             }
-                        }
-                } placeholder: {
-                    ProgressView()
+                    } placeholder: {
+                        ProgressView()
+                    }
                 }
                 Text("\(viewModel.currentImage + 1) of \(viewModel.chapterImages.count)")
                     .font(.subheadline)

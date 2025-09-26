@@ -9,7 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ExploreView: View {
-    @State var viewModel: ExploreViewModel
+    @StateObject var viewModel: ExploreViewModel
     @Environment(\.dismissSearch) private var dismissSearch
     var body: some View {
         NavigationStack(path: $viewModel.path) {
