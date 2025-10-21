@@ -13,7 +13,7 @@ struct MangaDetailsCellView: View {
     var description: String = "Description for the manga."
     var imageUrl: String? = Constants.randomImageUrl
     var cornerRadius: CGFloat = 16
-    var genres: [MangaGenre] = [.unknown]
+    var tags: [MangaTag] = []
     @State var expandDescription: Bool = false
     let genreGridColumns: [GridItem] = [
         GridItem(.flexible()),
@@ -72,15 +72,15 @@ struct MangaDetailsCellView: View {
     
     private var mangaGenres: some View {
         LazyVGrid(columns: genreGridColumns, alignment: .leading) {
-            ForEach(Array(genres.enumerated()), id: \.offset) { index, genre in
-                Text(genre.rawValue)
+            ForEach(tags, id:\.id) {tag in
+                Text(tag.attributes.name.en ?? "")
                     .font(.caption)
                     .padding(10)
                     .foregroundStyle(.white)
                     .background(Color.secondary.opacity(0.50))
                     .cornerRadius(10)
                     .frame(maxWidth: .infinity)
-                    .tag(index)
+                    .tag(tag.id)
             }
         }
     }

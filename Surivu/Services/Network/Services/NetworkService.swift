@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@MainActor
 protocol NetworkService {
     func makeNetworkRequest(request: URLRequest) async throws -> Data
 }

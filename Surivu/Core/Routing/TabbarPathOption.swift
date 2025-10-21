@@ -12,7 +12,7 @@ enum TabbarPathOption: Hashable {
 }
 
 struct NavDestForTabbarViewModifier: ViewModifier {
-    @Environment(DependencyContainer.self) private var dependencyContainer
+    @EnvironmentObject private var dependencyContainer: DependencyContainer
     let path: Binding<[TabbarPathOption]>
     
     func body(content: Content) -> some View {

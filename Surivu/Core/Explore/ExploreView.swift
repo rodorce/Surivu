@@ -15,19 +15,21 @@ struct ExploreView: View {
         NavigationStack(path: $viewModel.path) {
             VStack {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(MangaGenre.allCases, id: \.self) { genre in
-                            Text(genre.rawValue)
-                                .tag(genre)
-                                .padding(10)
-                                .background(Color(uiColor: .secondarySystemBackground))
-                                .cornerRadius(10)
-                                .onTapGesture {
-                                    viewModel.filterMangaByGenre(genre: genre)
-                                }
+                    if !viewModel.mangaTags.isEmpty {
+                        HStack {
+                            ForEach(viewModel.mangaTags, id:\.id) { tag in
+                                Text(tag.attributes.name.en ?? "")
+                                    .tag(tag.id)
+                                    .padding(10)
+                                    .background(Color(uiColor: .secondarySystemBackground))
+                                    .cornerRadius(10)
+                                    .onTapGesture {
+                                        viewModel.filterMangaByTag(tag: tag)
+                                    }
+                            }
                         }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, 10)
                 if viewModel.isGridLoading {
@@ -42,7 +44,7 @@ struct ExploreView: View {
                 }
                 ScrollView {
                     LazyVGrid(columns: viewModel.columns, spacing: 10) {
-                        ForEach(viewModel.mangas, id:\.id) { manga in
+                        ForEach(viewModel.mangas) { manga in
                             if let coverUrl = manga.coverUrl {
                                 image(imageUrl: coverUrl, mangaTitle: manga.title)
                                     .onTapGesture {
@@ -52,8 +54,11 @@ struct ExploreView: View {
                         }
                     }
                     .padding(.horizontal, 2)
-                    .task {
-                        await viewModel.loadMangas()
+                    .onAppear {
+                        Task {
+                            await viewModel.loadMangas()
+                            await viewModel.loadMangaTags()
+                        }
                     }
                 }
                 

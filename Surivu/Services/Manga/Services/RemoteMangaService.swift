@@ -12,8 +12,8 @@ struct RemoteMangaService: MangaService {
     let networkService: NetworkService
     
     //MARK: - Manga Details
-    func getMangas(title: String?, limit: String?, genres: [MangaGenre]?) async throws -> [MangaEntity] {
-        let queryItems = generateMangaQueryItems(title: title, limit: limit, genres: genres)
+    func getMangas(title: String?, limit: String?, tags: [MangaTag]?) async throws -> [MangaEntity] {
+        let queryItems = generateMangaQueryItems(title: title, limit: limit, tags: tags)
         let endpoint = MangaEndpoint.getMangas(httpParams: queryItems)
         let request = try URLRequest(endpoint: endpoint)
         return try await generateMangaEntities(request: request)
@@ -24,6 +24,13 @@ struct RemoteMangaService: MangaService {
         let request = try URLRequest(endpoint: coverEndpoint)
         let data = try await networkService.makeNetworkRequest(request: request)
         return try decode(APIObjectResponse<CoverEntity>.self, from: data).data
+    }
+    
+    func getMangaTags() async throws -> [MangaTag] {
+        let tagsEndpoint = MangaEndpoint.getTags
+        let request = try URLRequest(endpoint: tagsEndpoint)
+        let data = try await networkService.makeNetworkRequest(request: request)
+        return try decode(APIListResponse<MangaTag>.self, from: data).data
     }
     
     //MARK: - Chapters
@@ -46,7 +53,7 @@ struct RemoteMangaService: MangaService {
     }
     
     //MARK: - Helper Functions - Manga
-    private func generateMangaQueryItems(title: String?, limit: String?, genres: [MangaGenre]?) -> [URLQueryItem] {
+    private func generateMangaQueryItems(title: String?, limit: String?, tags: [MangaTag]?) -> [URLQueryItem] {
         var queries: [URLQueryItem] = []
         if let title = title {
             let titleQuery = URLQueryItem(name: "title", value: title)
@@ -56,8 +63,8 @@ struct RemoteMangaService: MangaService {
             let titleQuery = URLQueryItem(name: "limit", value: limit)
             queries.append(titleQuery)
         }
-        genres?.forEach { genre in
-            queries.append(URLQueryItem(name: "includedTags[]", value: genre.id))
+        tags?.forEach { tag in
+            queries.append(URLQueryItem(name: "includedTags[]", value: tag.id))
         }
         return queries
     }

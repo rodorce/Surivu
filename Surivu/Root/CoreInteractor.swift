@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@MainActor
 struct CoreInteractor {
     private let mangaManager: MangaManager
     private let authManager: AuthManager
@@ -32,15 +31,19 @@ struct CoreInteractor {
     
     //MARK: MangaManager
     func getManga(id: String) async throws -> MangaDetail? {
-         mangaManager.getManga(id: id)
+         await mangaManager.getManga(id: id)
     }
     
-    func getMangasBy(title: String?, limit: String?, genres: [MangaGenre]?) async throws -> [MangaDetail] {
-        if mangaManager.mangas.isEmpty || title != nil || genres != nil {
-            try await mangaManager.getMangasBy(title: title, limit: "12", genres: nil)
-            return mangaManager.mangas
+    func getMangaTags() async throws -> [MangaTag] {
+        try await mangaManager.getMangaTags()
+    }
+    
+    func getMangasBy(title: String?, limit: String?, tags: [MangaTag]?) async throws -> [MangaDetail] {
+        if await mangaManager.mangas.isEmpty || title != nil || tags != nil {
+            try await mangaManager.getMangasBy(title: title, limit: "12", tags: tags)
+            return await mangaManager.mangas
         }
-        return mangaManager.mangas
+        return await mangaManager.mangas
     }
     
     func getChapters(byMangaId: String, limit: Int?, offset: Int) async throws -> [ChapterDetail] {

@@ -8,7 +8,8 @@ import SwiftUI
 import Combine
 
 protocol ExploreInteractor {
-    func getMangasBy(title: String?, limit: String?, genres: [MangaGenre]?) async throws -> [MangaDetail]
+    func getMangasBy(title: String?, limit: String?, tags: [MangaTag]?) async throws -> [MangaDetail]
+    func getMangaTags() async throws -> [MangaTag]
 }
 
 extension CoreInteractor: ExploreInteractor {}
@@ -22,10 +23,11 @@ class ExploreViewModel: ObservableObject {
     ]
     
     @Published var mangas: [MangaDetail] = []
+    @Published var mangaTags: [MangaTag] = []
     @Published private(set) var isGridLoading: Bool = true
     @Published private var currentTask: Task<Void, Never>? = nil
     @Published var searchText: String = ""
-    @Published var selectedGenre: MangaGenre = .romance
+    @Published var selectedGenre: MangaTag = MangaTag(id: "", type: .tag, attributes: TagAttributes(name: Title(en: ""), group: .content, version: 1))
     @Published var path: [TabbarPathOption] = []
     
     init(interactor: ExploreInteractor) {
@@ -35,11 +37,19 @@ class ExploreViewModel: ObservableObject {
     func loadMangas() async {
         isGridLoading = true
         do {
-            mangas = try await interactor.getMangasBy(title: nil, limit: "20", genres: nil)
+            mangas = try await interactor.getMangasBy(title: nil, limit: "20", tags: nil)
         } catch {
             print("Error retrieving mangas list \(error)")
         }
         isGridLoading = false
+    }
+    
+    func loadMangaTags() async {
+        do {
+            mangaTags = try await interactor.getMangaTags()
+        } catch {
+            print("Error retrieving manga tags \(error)")
+        }
     }
     
     func onPressManga(mangaId: String) {
@@ -54,7 +64,7 @@ class ExploreViewModel: ObservableObject {
             try? await Task.sleep(for: .seconds(3))
             if Task.isCancelled { return }
                 do {
-                    mangas = try await interactor.getMangasBy(title: title, limit: "12", genres: nil)
+                    mangas = try await interactor.getMangasBy(title: title, limit: "12", tags: nil)
                 } catch {
                     print("Could not retrieve searched mangas.")
                 }
@@ -62,21 +72,15 @@ class ExploreViewModel: ObservableObject {
         }
     }
     
-    func filterMangaByGenre(genre: MangaGenre) {
+    func filterMangaByTag(tag: MangaTag) {
         Task {
             isGridLoading = true
             do {
-                print(mangas.count)
-                mangas = try await interactor.getMangasBy(title: nil, limit: "12", genres: [genre])
-                print(mangas.count)
+                mangas = try await interactor.getMangasBy(title: nil, limit: "12", tags: [tag])
             } catch {
                 print("Could not filter mangas \(error)")
             }
             isGridLoading = false
         }
-    }
-    
-    func loadGenreTags() {
-//        interactor.getGenreTags()
     }
 }

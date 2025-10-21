@@ -5,20 +5,19 @@
 //  Created by Rodolfo Ramirez on 18/09/25.
 //
 import SwiftUI
+import Combine
 
-@MainActor
-@Observable
-class MangaManager {
+actor MangaManager: ObservableObject {
     private let service: MangaService
-    private(set) var mangas: [MangaDetail] = []
+    @Published private(set) var mangas: [MangaDetail] = []
     
     init(service: MangaService) {
         self.service = service
     }
     
     //MARK: - Mangas
-    func getMangasBy(title: String?, limit: String?, genres: [MangaGenre]?) async throws {
-        let mangaEntities: [MangaEntity] = try await service.getMangas(title: title, limit: limit, genres: genres)
+    func getMangasBy(title: String?, limit: String?, tags: [MangaTag]?) async throws {
+        let mangaEntities: [MangaEntity] = try await service.getMangas(title: title, limit: limit, tags: tags)
         mangas = try await generateMangaDetails(mangaEntities: mangaEntities)
     }
     
@@ -26,12 +25,22 @@ class MangaManager {
         return mangas.first(where: {$0.id == id})
     }
     
+    func getMangaTags() async throws -> [MangaTag] {
+        return try await service.getMangaTags()
+    }
+    
     //MARK: - Chapters
     func getChapters(mangaId: String, limit: Int?, offset: Int) async throws -> [ChapterDetail] {
         let chapterEntities: [ChapterEntity] = try await service.getChapters(mangaId: mangaId, limit: limit, offset: offset)
-        return chapterEntities.map { entity in
-            ChapterDetail(chapterEntity: entity)
+        
+        // Sequentially await each `ChapterDetail` creation
+        var details: [ChapterDetail] = []
+        for entity in chapterEntities {
+            let detail = await ChapterDetail(chapterEntity: entity)
+            details.append(detail)
         }
+        
+        return details
     }
     
     func getChapterImages(chapterId: String) async throws -> [String] {
@@ -55,7 +64,7 @@ class MangaManager {
                         description: mangaEntity.attributes.description?.en ?? "",
                         coverUrl: coverUrl,
                         lastChapter: Int(mangaEntity.attributes.lastChapter ?? "0") ?? 0,
-                        genres: mangaEntity.attributes.tags.map { MangaGenre(rawValue: $0.attributes.name.en ?? "") ?? .unknown }
+                        genres: mangaEntity.attributes.tags
                     )
                 }
             }

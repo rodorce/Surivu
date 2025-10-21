@@ -10,6 +10,7 @@ import Foundation
 enum MangaEndpoint: Endpoint {
     case getMangas(httpParams: [URLQueryItem])
     case getCovers(coverId: String)
+    case getTags
     
     var baseURL: URL {
         URL(string: "https://api.mangadex.org")!
@@ -17,7 +18,7 @@ enum MangaEndpoint: Endpoint {
     
     var method: HTTPMethod {
         switch self {
-        case .getMangas, .getCovers:
+        case .getMangas, .getCovers, .getTags:
             return .get
         }
     }
@@ -28,6 +29,8 @@ enum MangaEndpoint: Endpoint {
             return "manga"
         case .getCovers(let id):
             return "cover/\(id)"
+        case .getTags:
+            return "manga/tag"
         }
     }
     
@@ -35,6 +38,8 @@ enum MangaEndpoint: Endpoint {
         switch self {
         case .getMangas(let items):
             var defaultItems: [URLQueryItem] = [
+                URLQueryItem(name: "publicationDemographic[]", value: "shounen"),
+                URLQueryItem(name: "contentRating[]", value: "safe"),
                 URLQueryItem(name: "hasAvailableChapters", value: "true"),
                 URLQueryItem(name: "hasUnavailableChapters", value: "0"),
                 URLQueryItem(name: "includes[]", value: "cover_art"),
@@ -43,6 +48,8 @@ enum MangaEndpoint: Endpoint {
             defaultItems.append(contentsOf: items)
             return defaultItems
         case .getCovers:
+            return nil
+        case .getTags:
             return nil
         }
     }

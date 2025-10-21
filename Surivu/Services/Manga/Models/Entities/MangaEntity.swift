@@ -230,14 +230,14 @@ enum Status: String, Codable {
 }
 
 // MARK: - Tag
-struct MangaTag: Codable {
+struct MangaTag: Identifiable, Codable, Equatable, Hashable {
     let id: String
     let type: TagType
     let attributes: TagAttributes
 }
 
 // MARK: - TagAttributes
-struct TagAttributes: Codable {
+struct TagAttributes: Codable, Equatable, Hashable {
     let name: Title
     let group: Group
     let version: Int
@@ -247,7 +247,7 @@ struct TagAttributes: Codable {
 struct FluffyDescription: Codable {
 }
 
-enum Group: String, Codable {
+enum Group: String, CaseIterable, Codable, Equatable {
     case content = "content"
     case format = "format"
     case genre = "genre"
@@ -255,11 +255,11 @@ enum Group: String, Codable {
 }
 
 // MARK: - Title
-struct Title: Codable {
+struct Title: Codable, Equatable, Hashable {
     let en: String?
 }
 
-enum TagType: String, Codable {
+enum TagType: String, Codable, CaseIterable {
     case tag = "tag"
 }
 

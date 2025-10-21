@@ -6,7 +6,6 @@
 //
 import SwiftUI
 
-@MainActor
 struct Dependencies {
     let container: DependencyContainer
     let mangaManager: MangaManager
@@ -56,6 +55,6 @@ struct DevPreview {
 extension View {
     func previewEnvironment() -> some View {
         self
-            .environment(DevPreview.shared.container)
+            .environmentObject(DevPreview.shared.container)
     }
 }

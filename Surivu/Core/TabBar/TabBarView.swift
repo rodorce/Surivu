@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TabBarView: View {
-    @Environment(DependencyContainer.self) private var container
+    @EnvironmentObject private var container: DependencyContainer
     var body: some View {
         TabView {
             Tab("Explore", systemImage: "eyes") {

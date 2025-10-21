@@ -5,52 +5,23 @@
 //  Created by Rodolfo Ramirez on 20/09/25.
 //
 
-enum MangaGenre: String, CaseIterable {
-    case romance = "Romance"
-    case action = "Action"
-    case martialArts = "Martial Arts"
-    case drama = "Drama"
-    case fantasy = "Fantasy"
-    case comedy = "Comedy"
-    case unknown = "Unknown"
-    
-    var id: String {
-        switch self {
-        case .romance:
-            return "423e2eae-a7a2-4a8b-ac03-a8351462d71d"
-        case .action:
-            return "391b0423-d847-456f-aff0-8b0cfc03066b"
-        case .martialArts:
-            return "799c202e-7daa-44eb-9cf7-8a3c0441531e"
-        case .drama:
-            return "b9af3a63-f058-46de-a9a0-e0c13906197a"
-        case .fantasy:
-            return "cdc58593-87dd-415e-bbc0-2ec27bf404cc"
-        case .comedy:
-            return "4d32cc48-9f00-4cca-9b5a-a839f0764984"
-        case .unknown:
-            return "unknown_id"
-        }
-    }
-}
-
-struct MangaDetail {
+struct MangaDetail: Identifiable, Hashable {
     let id: String
     let coverId: String
     let title: String
     let description: String
     let coverUrl: String?
     let lastChapter: Int?
-    let genres: [MangaGenre]
+    let tags: [MangaTag]
     
-    init(id: String, coverId: String, title: String, description: String, coverUrl: String? = nil, lastChapter: Int, genres: [MangaGenre]) {
+    init(id: String, coverId: String, title: String, description: String, coverUrl: String? = nil, lastChapter: Int, genres: [MangaTag]) {
         self.id = id
         self.coverId = coverId
         self.title = title
         self.description = description
         self.coverUrl = coverUrl
         self.lastChapter = lastChapter
-        self.genres = genres
+        self.tags = genres
     }
     
     init(entity: MangaEntity) {
@@ -60,7 +31,7 @@ struct MangaDetail {
         self.description = entity.attributes.description?.en ?? ""
         self.coverUrl = ""
         self.lastChapter = Int(entity.attributes.lastChapter ?? "0") ?? 0
-        self.genres = entity.attributes.tags.map { MangaGenre(rawValue: $0.attributes.name.en ?? "")! }
+        self.tags = entity.attributes.tags
     }
     static var mock: MangaDetail {
         MangaDetail(

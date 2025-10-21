@@ -8,15 +8,10 @@
 import SwiftUI
 
 struct AppView: View {
-    @Environment(DependencyContainer.self) private var container
+    @EnvironmentObject private var container: DependencyContainer
     @State var viewModel: AppViewModel
     var body: some View {
-        if viewModel.interactor.showTabBar {
-            TabBarView()
-        }
-        else {
-            LogInView(viewModel: LoginViewModel(interactor: CoreInteractor(container: container)))
-        }
+        TabBarView()
     }
     
 }

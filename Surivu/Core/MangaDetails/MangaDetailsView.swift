@@ -21,7 +21,7 @@ struct MangaDetailsView: View {
                             description: manga.description,
                             imageUrl: manga.coverUrl,
                             cornerRadius: 0,
-                            genres: manga.genres
+                            tags: manga.tags
                         )
                         .removeListRowFormatting()
                     }

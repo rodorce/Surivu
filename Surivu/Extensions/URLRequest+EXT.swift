@@ -18,7 +18,7 @@ extension URLRequest {
                 url = urlWithQuery
             }
         }
-
+        
         self.init(url: url)
         self.httpMethod = endpoint.method.rawValue
 
